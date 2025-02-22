@@ -1,5 +1,6 @@
 import {containerPictures} from './image-modal.js';
 import {isEscapeKey} from './util.js';
+import {resetScale} from './filter-for-photo.js';
 
 const MAX_HASHTAG_COUNT = 5;
 const VALID_SYMBOLS = /^#[a-za-яё0-9]{1,19}$/i;
@@ -30,6 +31,7 @@ const inFocus = () => document.activeElement === hastagField ||
 const hideModal = () => {
   form.reset();
   pristine.reset();
+  resetScale();
   overlay.classList.add('hidden');
   body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
