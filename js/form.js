@@ -1,4 +1,3 @@
-import {bodyElement} from './image-modal.js';
 import {containerPictures} from './image-modal.js';
 import {isEscapeKey} from './util.js';
 
@@ -9,75 +8,46 @@ const errorText = {
   NOT_UNIQUE: 'Хэштеши должны быть уникальными',
   INVALID_PATTERN: 'Неправильный хэштег',
 };
-
-const imgUploadForm = document.querySelector('.img-upload__form');
-const imgUploadInput = document.querySelector('.img-upload__input');
+const body = document.querySelector('body');
+const form = document.querySelector('.img-upload__form');
 const hastagField = document.querySelector('.text__hashtags');
-const imgUploadOverlay = document.querySelector('.img-upload__overlay');
-const imgUploadResetButton = containerPictures.querySelector('.img-upload__cancel');
-const imgUploudPreview = document.querySelector('.img-upload__preview img');
-const effectPreviews = document.querySelectorAll('.effects__preview');
+const overlay = document.querySelector('.img-upload__overlay');
+const canselButton = containerPictures.querySelector('.img-upload__cancel');
 const commentForImage = document.querySelector('.text__description');
+const fileField = document.querySelector('.img-upload__input');
 
 
-const pristine = new Pristine(imgUploadForm, {
+const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error',
 });
 
-function openUploadForm () {
-
-  imgUploadOverlay.classList.remove('hidden');
-  bodyElement.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeydown);
-}
-
 const inFocus = () => document.activeElement === hastagField ||
          document.activeElement === commentForImage;
+
+
+const hideModal = () => {
+  form.reset();
+  pristine.reset();
+  overlay.classList.add('hidden');
+  body.classList.remove('modal-open');
+  document.removeEventListener('keydown', onDocumentKeydown);
+};
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt) && !inFocus()) {
     evt.preventDefault();
-    closeUploadForm();
+    hideModal();
   }
 }
 
-function closeUploadForm () {
-  imgUploadForm.reset();
-  pristine.reset();
-  imgUploadOverlay.classList.add('hidden');
-  bodyElement.classList.remove('modal-open');
-  document.removeEventListener('keydown', onDocumentKeydown);
-}
+const showModal = () => {
+  overlay.classList.remove('hidden');
+  body.classList.add('modal-open');
+  document.addEventListener('keydown', onDocumentKeydown);
+};
 
-function loadsSelectedImg (evt) {
-  const file = evt.target.files[0];
-
-  if (file) {
-    openUploadForm();
-    const reader = new FileReader();
-
-    reader.addEventListener('load', () => {
-      const imageUrl = reader.result;
-
-      // Подставляем изображение в блок предварительного просмотра
-      imgUploudPreview.src = imageUrl;
-
-      // Подставляем изображение в блоки эффектов
-      effectPreviews.forEach((preview) => {
-        preview.src = imageUrl;
-      });
-
-      // Показываем форму редактирования
-      imgUploadOverlay.classList.remove('hidden');
-      bodyElement.classList.add('modal-open');
-    });
-
-    // Читаем файл как Data URL
-    reader.readAsDataURL(file);
-  }
-}
 
 const normalizeTags = (tagString) => tagString
   .trim()
@@ -93,6 +63,15 @@ const hasUnuqueTags = (value) => {
   return lowerCaseTags.length === new Set(lowerCaseTags).size;
 };
 
+
+const onCancelButtonClick = () => {
+  hideModal();
+};
+
+
+const onFileInputChange = () => {
+  showModal();
+};
 
 const onFormSubmit = (evt) => {
   evt.preventDefault();
@@ -122,10 +101,9 @@ pristine.addValidator(
   1,
   true
 );
-imgUploadForm.addEventListener('submit', onFormSubmit);
-imgUploadResetButton.addEventListener('click', closeUploadForm);
-imgUploadInput.addEventListener('change', loadsSelectedImg);
 
+fileField.addEventListener('change', onFileInputChange);
+canselButton.addEventListener('click', onCancelButtonClick);
+form.addEventListener('submit', onFormSubmit);
 
-export {openUploadForm,closeUploadForm, pristine};
 

@@ -70,9 +70,7 @@ containerPictures.addEventListener('keydown', (evt) => {
   }
 });
 
-buttonReset.addEventListener('click', () => {
-  closeFullPicture();
-});
+buttonReset.addEventListener('click', closeFullPicture);
 
 const renderGallery = (pictures) => {
   containerPictures.addEventListener('click', (evt) => {
