@@ -8,7 +8,7 @@ const scaleControlValue = document.querySelector('.scale__control--value');
 const imageElement = document.querySelector('.img-upload__preview img');
 const effectRange = document.querySelector('.effect-level__slider');
 const effectInput = document.querySelector('.effect-level__value');
-const effectList = document.querySelectorAll('.effects__list');
+const effectList = document.querySelector('.effects__list');
 
 let currentEffect = 'none';
 
@@ -72,14 +72,44 @@ const setupSlider = (effect) => {
       max: effect.max,
     },
     step: effect.step,
-    start: [effect.max],
+    start: effect.max,
   });
+
+  effectInput.value = effect.max; // Устанавливаем значение
+  updateFilter(effect.max); // Применяем фильтр
+};
+
+const resetFilter = () => {
+  currentEffect = 'none'; // Сбрасываем эффект на стандартный
+  imageElement.style.filter = 'none'; // Убираем стиль фильтра
+  effectInput.value = ''; // Очищаем поле значения
+
+  slider.updateOptions({
+    range: {
+      min: 0,
+      max: 100,
+    },
+    step: 1,
+    start: 100,
+  });
+
+  slider.set(100); // Ставим слайдер в начальное положение
 };
 
 
+
 effectRange.noUiSlider.on('update', (values) => {
-  const value = values[0];
-  updateFilter(value);
+  const value = values[0]; // Получаем текущее значение слайдера
+  effectInput.value = value; // Обновляем поле ввода
+  updateFilter(value); // Применяем эффект
+});
+
+
+effectList.addEventListener('change', (event) => {
+  if (event.target.matches('input[type="radio"]')) {
+    currentEffect = event.target.value;
+    setupSlider(effects[currentEffect]); // Теперь передаём объект фильтра
+  }
 });
 
 
@@ -87,4 +117,4 @@ scaleControlSmaller.addEventListener('click', onSmallerButtonClick);
 scaleControlBigger.addEventListener('click', onBiggerButtonClick);
 
 
-export {resetScale};
+export {resetScale, resetFilter};
