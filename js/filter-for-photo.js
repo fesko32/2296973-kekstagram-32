@@ -9,16 +9,19 @@ const imageElement = document.querySelector('.img-upload__preview img');
 const effectRange = document.querySelector('.effect-level__slider');
 const effectInput = document.querySelector('.effect-level__value');
 const effectList = document.querySelector('.effects__list');
+const containerEffectLevel = document.querySelector(
+  '.img-upload__effect-level'
+);
 
 let currentEffect = 'none';
 
 const effects = {
-  'none': { min: 0, max: 100, step: 1, unit: '', filter: 'none' },
-  'chrome': { min: 0, max: 1, step: 0.1, unit: '', filter: 'grayscale' },
-  'sepia': { min: 0, max: 1, step: 0.1, unit: '', filter: 'sepia' },
-  'marvin': { min: 0, max: 100, step: 1, unit: '%', filter: 'invert' },
-  'phobos': { min: 0, max: 3, step: 0.1, unit: 'px', filter: 'blur' },
-  'heat': { min: 1, max: 3, step: 0.1, unit: '', filter: 'brightness' },
+  none: { min: 0, max: 100, step: 1, unit: '', filter: 'none' },
+  chrome: { min: 0, max: 1, step: 0.1, unit: '', filter: 'grayscale' },
+  sepia: { min: 0, max: 1, step: 0.1, unit: '', filter: 'sepia' },
+  marvin: { min: 0, max: 100, step: 1, unit: '%', filter: 'invert' },
+  phobos: { min: 0, max: 3, step: 0.1, unit: 'px', filter: 'blur' },
+  heat: { min: 1, max: 3, step: 0.1, unit: '', filter: 'brightness' },
 };
 
 /**
@@ -30,7 +33,6 @@ const scaleImage = (value) => {
   scaleControlValue.value = `${value}%`;
   imageElement.style.transform = `scale(${value / 100})`;
 };
-
 
 const onSmallerButtonClick = () => {
   scaleImage(
@@ -53,14 +55,16 @@ const slider = noUiSlider.create(effectRange, {
   range: {
     min: 0,
     max: 100,
-  }
+  },
 });
 
 const updateFilter = (value) => {
   const effect = effects[currentEffect];
   if (currentEffect === 'none') {
+    containerEffectLevel.style.display = 'none';
     imageElement.style.filter = 'none';
   } else {
+    containerEffectLevel.style.display = 'block';
     imageElement.style.filter = `${effect.filter}(${value}${effect.unit})`;
   }
 };
@@ -96,14 +100,11 @@ const resetFilter = () => {
   slider.set(100); // Ставим слайдер в начальное положение
 };
 
-
-
 effectRange.noUiSlider.on('update', (values) => {
   const value = values[0]; // Получаем текущее значение слайдера
   effectInput.value = value; // Обновляем поле ввода
   updateFilter(value); // Применяем эффект
 });
-
 
 effectList.addEventListener('change', (event) => {
   if (event.target.matches('input[type="radio"]')) {
@@ -112,9 +113,7 @@ effectList.addEventListener('change', (event) => {
   }
 });
 
-
 scaleControlSmaller.addEventListener('click', onSmallerButtonClick);
 scaleControlBigger.addEventListener('click', onBiggerButtonClick);
 
-
-export {resetScale, resetFilter};
+export { resetScale, resetFilter };
