@@ -1,8 +1,6 @@
-import {generatePhotos} from './data.js';
+// import { generatePhotos } from './data.js';
 import './form.js';
 import './filter-for-photo.js';
-import {renderGallery} from './image-modal.js';
+import './api.js';
 
-
-renderGallery(generatePhotos());
 
